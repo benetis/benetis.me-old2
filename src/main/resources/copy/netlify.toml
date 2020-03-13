@@ -1,0 +1,5 @@
+[[redirects]]
+ from = "/posts/*"
+ to = "https://benetis.me/old/:splat"
+ status = 301
+ force = true
