@@ -1,5 +1,0 @@
-[[redirects]]
- from = "/posts/:slug"
- to = "/old/posts/:slug"
- status = 301
- force = false
