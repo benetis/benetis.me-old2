@@ -7,7 +7,11 @@ import scalatags.Text.all._
 object Navigation extends Partial {
   def render(): Content = {
     tag("nav")(
-      div(a("Old blog - "))
+      div(
+        a(href := "https://benetis.me/posts/new-world-blog.html",
+          "From the New world")
+      ),
+      div(a(href := "https://benetis.me/old", "Archived blog")),
     )
   }
 }

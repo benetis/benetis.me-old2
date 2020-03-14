@@ -21,9 +21,12 @@ object MainPartial extends Partial {
         )
       ),
       body(
-        h1(post.params.title),
-        div(`class` := "post-container", post.render()),
-        Navigation.render(),
+        div(
+          `class` := "page-container",
+          h1(post.params.title),
+          div(`class` := "post-container", post.render()),
+          Navigation.render(),
+        ),
         Footer.render(posts)
       )
     )

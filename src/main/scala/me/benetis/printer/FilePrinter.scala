@@ -10,7 +10,7 @@ object FilePrinter {
 
     val projectDir = System.getProperty("user.dir")
     openFile(
-      s"$projectDir${File.separator}output${File.separator}${compiledPage.name}.html")
+      s"$projectDir${File.separator}output${File.separator}posts${File.separator}${compiledPage.name}.html")
       .bracket(bw => UIO(bw.close())) { bw =>
         Task(bw.write(compiledPage.pageContent))
       }
