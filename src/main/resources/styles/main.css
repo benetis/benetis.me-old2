@@ -14,10 +14,6 @@ body {
 
     font-family: serif;
     background-color: #fdf6e3;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 h1,h2,h3,h4,h5 {
@@ -43,8 +39,7 @@ a:visited {
 
 footer {
     max-width: 1200px;
-    text-align: center;
-    flex-basis: 100%;
+    padding: 30px 10px 10px 0px;
 }
 
 footer a {
