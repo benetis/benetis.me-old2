@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lets Code on Typical personal blog</title>
+    <link>https://benetis.me/tags/lets-code/</link>
+    <description>Recent content in Lets Code on Typical personal blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy; All rights reserved</copyright>
+    <lastBuildDate>Sun, 14 May 2017 23:00:24 +0200</lastBuildDate>
+    
+	<atom:link href="https://benetis.me/tags/lets-code/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Let&#39;s code: CRUD in Angular with unit tests</title>
+      <link>https://benetis.me/old/posts/angular-advanced-crud/</link>
+      <pubDate>Sun, 14 May 2017 23:00:24 +0200</pubDate>
+      
+      <guid>https://benetis.me/old/posts/angular-advanced-crud/</guid>
+      <description>Introduction CRUD application we are going to implement will have some additional complexity you might expect:
+ import/export data save/load chunks data lazy data processing pagination tests  This project&amp;rsquo;s source code is in github - https://github.com/benetis/angular-advanced-crud
+p.s some of code parts are not in sync going down - so I advise to also fork github repo and check code yourself
+Requirements &amp;amp; Task itself Aside of the stuff we mentioned above - we obviously will be implementing CRUD operations.</description>
+    </item>
+    
+    <item>
+      <title>Let&#39;s code: Authentication in Angular #2 : Auth service</title>
+      <link>https://benetis.me/old/posts/angular-authentication-oauth/</link>
+      <pubDate>Wed, 10 May 2017 23:00:24 +0200</pubDate>
+      
+      <guid>https://benetis.me/old/posts/angular-authentication-oauth/</guid>
+      <description>Introduction This is part two of Authentication in Angular series. This one is about building authentication part to handle OAuth calls for us. You can find first post here: https://benetis.me/old/posts/angular-authentication/
+We will be using redux with our angular project to help us handle side effects. https://github.com/ngrx/store
+Our setup - angular-cli 1.0 + Angular4 (Angular 4.1)
+Aims  After user clicks login - we need to call OAuth endpoint to get access and refresh tokens which we will store in local storage Show errors for user We want to store tokens in our redux store so they are easily accessible and can be added as headers to our api requests  Login Ah, the login.</description>
+    </item>
+    
+    <item>
+      <title>Let&#39;s code: Authentication in Angular #1 - creating login form</title>
+      <link>https://benetis.me/old/posts/angular-authentication/</link>
+      <pubDate>Mon, 24 Apr 2017 19:40:24 +0200</pubDate>
+      
+      <guid>https://benetis.me/old/posts/angular-authentication/</guid>
+      <description>Introduction Login form - a gate though which user logs into application. If it is working well - you don&amp;rsquo;t notice it - if it is bad - it will always annoy you. Of course it is not only UX/UI problem - there are security implications on server side also. But we will keep these concerns beyond this post scope.
+We will have few blog posts on authenticating Angular application.</description>
+    </item>
+    
+    <item>
+      <title>Let&#39;s code: Learning Haskell #1</title>
+      <link>https://benetis.me/old/posts/lets-code-learning-haskell-1/</link>
+      <pubDate>Sun, 04 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://benetis.me/old/posts/lets-code-learning-haskell-1/</guid>
+      <description>Introduction Last week has been very immutable for me. I was looking into redux, Elm, React - just the ideas and trying to implement something similar for Angular.
+For few years I have had a keen interest into functional programming and considered myself a good in the field. You know - using higher order functions, understand why null is evil - so code produced by me was &amp;ldquo;fairly&amp;rdquo; functional. Avoiding state, writing functions as pure as possible.</description>
+    </item>
+    
+    <item>
+      <title>Let&#39;s code: Creating functional table with Angular</title>
+      <link>https://benetis.me/old/posts/angular-table/</link>
+      <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://benetis.me/old/posts/angular-table/</guid>
+      <description>Offtopic Currently volunteering in organisation called &amp;ldquo;Erasmus student Network Lithuania&amp;rdquo;. Working with a team to develop internal HR system.
+Intro Looking at the requirement - there is a need to display data. A list of users. And some actions which can be done with each of the user. Table is a good way to make data look good.
+Let&amp;rsquo;s try to design how could this table look.
+Basic requirements  Table might need to display hundreds of records - pagination No need for selecting rows There will be action buttons in each row to interact with user Inline editing Should look nice (we don&amp;rsquo;t really care about design, just nice is enough) Filtering Sorting  Attempt #1 Using bootstrap - just the markup with some *ngFor magic.</description>
+    </item>
+    
+  </channel>
+</rss>
