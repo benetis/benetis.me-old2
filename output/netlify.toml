@@ -2,4 +2,4 @@
  from = "/posts/:slug"
  to = "https://benetis.me/old/posts/:slug"
  status = 301
- force = true
+ force = false
