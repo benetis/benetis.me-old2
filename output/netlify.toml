@@ -1,5 +1,5 @@
 [[redirects]]
- from = "/posts/*"
- to = "https://benetis.me/old/posts/:splat"
+ from = "/posts/:slug"
+ to = "https://benetis.me/old/posts/:slug"
  status = 301
  force = true
