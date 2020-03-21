@@ -11,19 +11,21 @@ object MainPartial extends Partial {
       head(
         script(""),
         link(
-          href := "styles/main.css",
+          href := "/styles/main.css",
           `type` := "text/css",
           rel := "stylesheet"
         ),
         link(
           href := "https://fonts.googleapis.com/css?family=Montserrat&display=swap",
           rel := "stylesheet"
-        )
+        ),
+        title := post.params.title
       ),
       body(
         div(
           `class` := "page-container",
           h1(post.params.title),
+          PostMeta.render(post.params),
           div(`class` := "post-container", post.render()),
           Navigation.render(),
         ),

@@ -5,8 +5,33 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "me.benetis"
 ThisBuild / organizationName := "benetis.me"
 
+val copyFiles = taskKey[Unit]("Copy public resources to output")
+
+copyFiles := {
+  import Path._
+
+  val src = (Compile / resourceDirectory).value / "public"
+
+  // get the files we want to copy
+  val htmlFiles: Seq[File] = (src ** "*").get()
+
+  // use Path.rebase to pair source files with target destination in crossTarget
+  val pairs = htmlFiles pair rebase(src, (Compile / baseDirectory).value / "output")
+
+  // Copy files to source files to target
+  IO.copy(pairs,
+    CopyOptions.apply(overwrite = true, preserveLastModified = true, preserveExecutable = false)
+  )
+
+}
+
 lazy val root = (project in file("."))
   .settings(
+    (compile in Compile) := {
+      val compileAnalysis = (compile in Compile).value
+      copyFiles.value
+      compileAnalysis
+    },
     scalacOptions ++= Seq(
       "-Ymacro-annotations",
       "-language:postfixOps"

@@ -46,3 +46,9 @@ footer a {
     text-decoration: none;
     color: #073642;
 }
+
+.post-meta {
+    padding-left: 2px;
+    font-size: 1rem;
+    color: #586e75;
+}
