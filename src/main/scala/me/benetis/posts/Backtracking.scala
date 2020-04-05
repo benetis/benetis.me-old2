@@ -72,7 +72,7 @@ val wholeBoard: Vector[Square] = {
       ),
       p("""Since this is not enough, next step is to keep some sort of state. The easiest solution should be to just iterate
           |through all squares and start backtracking from each of the squares. This actually works, although the code below
-          |is not performant due non-early return of foldLeft. Next step would be to replace it with something that can do early returns,
+          |is not performant due non-early return of foldLeft (takes a minute~ to find a solution). Next step would be to replace it with something that can do early returns,
           |but this is beyond my interest.
           |""".stripMargin),
       CodeSection.renderScala(

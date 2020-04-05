@@ -34,7 +34,7 @@ Try to put one queen and the next after that.
 No need to carry so called state of what squares were checked already and which ones were not. 
 This results with a problem that if no solution is found with 8 queens and first queen on square (1,1). </p><p>Since this is not enough, next step is to keep some sort of state. The easiest solution should be to just iterate
 through all squares and start backtracking from each of the squares. This actually works, although the code below
-is not performant due non-early return of foldLeft. Next step would be to replace it with something that can do early returns,
+is not performant due non-early return of foldLeft (takes a minute~ to find a solution). Next step would be to replace it with something that can do early returns,
 but this is beyond my interest.
 </p><pre class="code-container"><code class="language-scala line-numbers">
 def placeQueens(toPlace: Int,
@@ -71,4 +71,4 @@ def placeQueens(toPlace: Int,
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-36419336-4', 'auto');
-    ga('send', 'pageview');</script></footer></div><link href="/libs/prism.css" type="text/css" rel="stylesheet" /><script src="/libs/prism.js"></script><div style="height: 9999px"></div></body></html>
+    ga('send', 'pageview');</script></footer></div><link href="/libs/prism.css" type="text/css" rel="stylesheet" /><script src="/libs/prism.js"></script></body></html>

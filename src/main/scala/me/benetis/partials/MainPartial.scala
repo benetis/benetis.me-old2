@@ -36,7 +36,7 @@ object MainPartial extends Partial {
           rel := "stylesheet"
         ),
         script(src := "/libs/prism.js"),
-        div(style := "height: 9999px")
+//        div(style := "height: 9999px")
       )
     )
 
