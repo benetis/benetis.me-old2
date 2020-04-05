@@ -29,7 +29,14 @@ object MainPartial extends Partial {
           div(`class` := "post-container", post.render()),
           Navigation.render(),
         ),
-        Footer.render(posts)
+        Footer.render(posts),
+        link(
+          href := "/libs/prism.css",
+          `type` := "text/css",
+          rel := "stylesheet"
+        ),
+        script(src := "/libs/prism.js"),
+        div(style := "height: 9999px")
       )
     )
 

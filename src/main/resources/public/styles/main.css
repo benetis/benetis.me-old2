@@ -52,3 +52,26 @@ footer a {
     font-size: 1rem;
     color: #586e75;
 }
+
+.tags-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.tags-container div {
+    margin-right: 5px;
+}
+
+.image-container {
+    display: inline-block;
+}
+
+.image-caption {
+    text-align: center;
+    font-size: 1rem;
+    color: #586e75;
+}
+
+.code-container {
+    margin-left: -15px !important;
+}

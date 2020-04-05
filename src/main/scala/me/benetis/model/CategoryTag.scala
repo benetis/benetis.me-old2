@@ -15,3 +15,7 @@ case object Elm extends CategoryTag {
 case object Meta extends CategoryTag {
   override def value: String = "Meta"
 }
+
+case object Computing extends CategoryTag {
+  override def value: String = "Computing"
+}
