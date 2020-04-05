@@ -9,7 +9,7 @@ object Navigation extends Partial {
     tag("nav")(
       ul(
         li(
-          a(href := "https://benetis.me/articles/8-queens-backtracking.html",
+          a(href := "https://benetis.me/articles/backtracking-8-queens.html",
             "8 Queens backtracking")),
         li(
           a(href := "https://benetis.me/articles/new-world-blog.html",
