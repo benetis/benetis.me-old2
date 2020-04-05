@@ -1,30 +1,74 @@
-<!DOCTYPE html><html><head title="From the New World"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>From the New World</h1><div class="post-meta"><div>Posted on Mar 12, 2020</div><div><div>#Meta</div></div></div><div class="post-container"><div><h2>Introduction</h2><a href="https://www.youtube.com/watch?v=Qut5e3OfCvg">From the New World by Antonín Dvořák [youtube video]</a><p>
-Chances are that you like classical music. I personally do. There is a beautiful symphony &quot;From the New World&quot; 
- composed by Antonín Dvořák.
- The interesting part is that If you check local classical music events around January the 1st - you will probably see
- this symphony being performed. In my humble opinion, 
- coupled with the music itself, 
- it signals that this piece of art truly carries meaning of new beginning archetype. I am not sure If this is closer to
- rebirth, but it does feel like there is no reason to step back into the old world and we proudly get to celebrate the new one.
-</p><p>
- Stepping back into blogging I feel similar. It feels truly feels exciting.
- I can do it and I can do it differently and better (in my opinion).
- The question is what it is better. Previously I wrote blogs to learn to write better and to learn things better.
- Every opportunity at some exercise or presentation I did - I wrote it up. It was beneficial and some posts got quite
- a lot of views (at least in my book). I wrote about things I was learning about - as a tool to learn them better.
- Now my blogging stopped with start of my master studies and a switch from Typescript to Scala in a professional setting. I went to learn about AI field to a specific professor 
- as he looked promising (and indeed the experience lived up to my expectations).
- There were enough projects on my hands and quite many courses and topics to learn. No interest to write blogs as writing, creativity and learning resources
- were spent on university. Fast forward to present: I want to do those things again.
-</p><h2>Not a promise</h2><p>
- The question of what is better remains unanswered. In my opinion, If I want to write the best blog posts
- they have to be interesting to me first. In other words - I write to myself.
- Interesting and novelty strongly correlate for me. That is where the majority of future content will be.
- Instead of sharing battle experience on specific topics, I will be journeying somewhere new. 
- I expect that at some time this point of view of mine will change. That being said - I make no promises here.
-</p><div><h4>Feedback</h4><p>If you have any suggestions or want to contact me - I am eagerly waiting for your feedback: { blog at benetis.me }.</p></div></div></div><nav><div><a href="https://benetis.me/posts/new-world-blog.html">From the New world</a></div><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2020 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+<!DOCTYPE html><html><head title="Backtracking: 8 queens"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>Backtracking: 8 queens</h1><div class="post-meta"><div>Posted on Apr 5, 2020</div><div class="tags-container"><div>#Computing</div><div>#Scala</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>
+Recently I started reading a book [1] about evolutionary computing. As you can guess - its about
+problem solving using evolution concepts. One of the first examples in the book is about 8 queens puzzle.
+Its a puzzle in constraint satisfaction problem space and my guess is that it is solved with
+evolutionary computing later on. I think it would be interesting to look into more common
+algorithm for this puzzle before proceeding with the book. It is called backtracking.
+</p><h2>Puzzle</h2><p>
+ Put 8 queens on a 8x8 chessboard in such a way that no queen can take each other.
+ It might sound an easy puzzle to solve with code. However if you give it a shot -
+ you will quickly see that it is not so trivial.
+</p><div class="image-container"><img src="/images/backtracking/8queens.png" /><div class="image-caption">One of the solutions to this puzzle</div></div><h2>Approaching the problem</h2><h4>Data structures [2]</h4><pre class="code-container"><code class="language-scala line-numbers">
+case class Square(x: Int, y: Int)
+
+type PlacedQueens = Vector[Square]
+
+val wholeBoard: Vector[Square] = {
+  Range
+    .inclusive(1, 8)
+    .flatMap(x =&gt; {
+      Range
+        .inclusive(1, 8)
+        .map(y =&gt; {
+          Square(x, y)
+        })
+    })
+    .toVector
+}
+  </code></pre><p>Instead of usual chess squares with letters and digits, pair of digits (x, y) is used. 
+This is to avoid mapping letters to digits for diagonal checks later on. This optimisation's problem's goal
+ is to find a vector of square where queens can be put. Board of is chess is just a matrix with pairs of row and column numbers as their values.
+</p><p>| (1,1) (1,2) ... |</p><p>| (2,1) (2,2) ... |</p><h4>Algorithm</h4><p>
+The first 'solution' that comes to mind is a recursive one. 
+Try to put one queen and the next after that. 
+No need to carry so called state of what squares were checked already and which ones were not. 
+This results with a problem that if no solution is found with 8 queens and first queen on square (1,1). </p><p>Since this is not enough, next step is to keep some sort of state. The easiest solution should be to just iterate
+through all squares and start backtracking from each of the squares. This actually works, although the code below
+is not performant due non-early return of foldLeft (takes a minute~ to find a solution). Next step would be to replace it with something that can do early returns,
+but this is beyond my interest.
+</p><pre class="code-container"><code class="language-scala line-numbers">
+def placeQueens(toPlace: Int,
+                available: Vector[Square]): Option[PlacedQueens] = {
+
+  if (toPlace &lt;= 0) {
+    Some(Vector.empty[Square])
+  } else {
+    val result = available.foldLeft(Vector.empty[Square])(
+      (prev, queenToPlace: Square) =&gt; {
+        val afterQueen = canBePlaced(queenToPlace, available)
+
+        afterQueen match {
+          case Some(nextSquares) =&gt;
+            placeQueens(toPlace - 1, nextSquares) match {
+              case Some(value) =&gt;
+                queenToPlace +: value
+              case None =&gt; prev
+            }
+          case None =&gt; prev
+        }
+
+      }
+    )
+
+    if (result.isEmpty)
+      None
+    else
+      Some(result)
+  }
+}
+          </code></pre><h4>Bibliography</h4><ul><li>[1] - Introduction to Evolutionary Computing By A.E. Eiben, J.E. Smith </li><li><a href="https://github.com/benetis/didactic-computing-machine/blob/master/software-and-math-exercises/constraint-satisfaction/src/main/scala/me/benetis/Main.scala">[2] - Demo'ed code of this problem (github)</a></li></ul><div><h4>Feedback</h4><p>If you have any suggestions or want to contact me - I am eagerly waiting for your feedback: { blog at benetis.me }.</p></div></div></div><nav><ul><li><a href="https://benetis.me/articles/8-queens-backtracking.html">8 Queens backtracking</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2020 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-36419336-4', 'auto');
-    ga('send', 'pageview');</script></footer></div></body></html>
+    ga('send', 'pageview');</script></footer></div><link href="/libs/prism.css" type="text/css" rel="stylesheet" /><script src="/libs/prism.js"></script></body></html>
