@@ -1,0 +1,16 @@
+<!DOCTYPE html><html><head title="Conway's Game of life"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>Conway's Game of life</h1><div class="post-meta"><div>Posted on Apr 23, 2020</div><div class="tags-container"><div>#Computing</div><div>#Scala</div><div>#Zio</div><div>#Simulation</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>The game of life is a cellular automation devised by John Conway.
+This simulation has only few rules, but it is turing complete [0] and incredibly interesting to watch.
+With recent news about Conway, I thought its time to give it a go.
+In one programming kata I had encountered this problem, but never went to fully complete this simulation.
+ This time with my favorite programming language: Scala and current favorite library ZIO [1].</p><div class="image-container"><img src="/images/game_of_life/game_of_life_for_blog.gif" /><div class="image-caption"></div></div><h2>Rules of the game</h2><p>Universe is 2D infinite space. With that we have four simple rules for our automation:</p><ul><li>Any live cell with fewer than two live neighbours dies, as if by underpopulation</li><li>Any live cell with two or three live neighbours lives on to the next generation</li><li>Any live cell with more than three live neighbours dies, as if by overpopulation</li><li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction</li></ul><p>Each cell will have 8 neighbours which need to be checked for these rules to be used
+This results in next game state and same rules will need to be applied to create third game state. 
+And so on.</p><pre>
++-----+
+|YYY--|
+|YXY--|
++YYY--+ , where X is the cell and Y are its neighbours.</pre><h4>Bibliography</h4><ul><li><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">[0] - https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a></li><li><a href="https://zio.dev/">[1] - Type-safe, composable asynchronous and concurrent programming for Scala</a></li></ul><div><h4>Feedback</h4><p>If you have any suggestions or want to contact me - I am eagerly waiting for your feedback: { blog at benetis.me }.</p></div></div></div><nav><ul><li><a href="https://benetis.me/articles/game-of-life.html">Conway's Game of life</a></li><li><a href="https://benetis.me/articles/backtracking-8-queens.html">Backtracking: 8 queens</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2020 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-36419336-4', 'auto');
+    ga('send', 'pageview');</script></footer></div><link href="/libs/prism.css" type="text/css" rel="stylesheet" /><script src="/libs/prism.js"></script></body></html>

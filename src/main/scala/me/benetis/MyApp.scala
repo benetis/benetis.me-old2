@@ -12,7 +12,8 @@ object MyApp extends App {
 
   val publishedPosts: Set[Post] = Set(
     posts.NewWorld,
-    posts.Backtracking
+    posts.Backtracking,
+    posts.GameOfLife
   )
 
   val myAppLogic: ZIO[Console, Throwable, Unit] =
