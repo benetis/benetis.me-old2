@@ -50,13 +50,13 @@ object GameOfLife extends Post {
           |The first part is where the rules of simulation are implemented. For this my plan is to implement them
           |using TDD methodology where I write least amount of code possible. For the second part the state just needs
           | to be rendered. I think its a good place to use HTML Canvas and just paint rectangles to represent cells.""".stripMargin),
-      h2("Test driven development"),
-      p("""Starting with simplest test and then implementing the code.
-          | A test for first rule: after one iteration we expect universe to become empty.
-          | Also, since universe is infinite - there are infinite amount of dead cells. 
+      p("""Some considerations: since universe is infinite - there are infinite amount of dead cells. 
           | This means that live cells should be stored. On top of that - no reason to rush with
           | multi dimensional arrays just because this task deals with 2D plane. 
           | That's the beauty of TDD as in the end you never need them anyway.""".stripMargin),
+      h2("Test driven development"),
+      p("""Starting with simplest test and then implementing the code.
+          | A test for first rule: after one iteration we expect universe to become empty.""".stripMargin),
       CodeSection.renderScala(
         """
 test("cell should die if it has no neighbours") {
@@ -108,7 +108,7 @@ test("dead cell with 3 live neighbours becomes a live cell") {
           |Next step is to render calculated 2D universe.""".stripMargin),
       h2("Will it render?"),
       p("""Few things to be done to render cells. First is to decide on frameworks/tools and platform. 
-          |'Platform' was mentioned before - HTML Canvas. 
+          |'Platform' was mentioned in previous section - HTML Canvas. 
           |With HTML Canvas comes Javascript and ScalaJS is a perfect candidate there. I did consider Swing and JavaFX, but
           |after playing with it a bit I was not impressed. It seemed hard to do anything 'functionally'. """.stripMargin),
       p("Part of program which coordinates rendering:"),
@@ -124,7 +124,7 @@ val program: ZIO[Clock, Throwable, Unit] = {
   } yield ()
 }
         """),
-      p("""Prepare screen is just setting up canvas and returning 2D renderer.
+      p("""PrepareScreen is just setting up canvas and returning 2D renderer.
           |RefState is where things get interesting. 
           |Current cells universe is stored in that reference. 
           |And that reference is mutable reference to cell universe value. 
@@ -154,6 +154,7 @@ private def updateState(ref: Ref[LifeState]): ZIO[Any, Nothing, Unit] =
       p("""In render function state is retrieved and iterated. 
           |State is just a Set of points, so to render it only one iteration is needed.
           |Update state does two things: 1) calculate next state 2) update ref with that state.""".stripMargin),
+      p("""Everything is compiled to Javascript and rendered in a browser through index.html and game-of-life-fastopt.js"""),
       h2("Summary"),
       p("""This concludes this quick write up about my experiment with Conway's game of life implementation. 
           |Two conclusions I made: Test driven development can really improve code to prevent over engineering solutions and
