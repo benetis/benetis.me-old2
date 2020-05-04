@@ -1,14 +1,98 @@
-<!DOCTYPE html><html><head title="Conway's Game of life"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>Conway's Game of life</h1><div class="post-meta"><div>Posted on Apr 23, 2020</div><div class="tags-container"><div>#Computing</div><div>#Scala</div><div>#Zio</div><div>#Simulation</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>The game of life is a cellular automation devised by John Conway.
+<!DOCTYPE html><html><head title="Conway's Game of life"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>Conway's Game of life</h1><div class="post-meta"><div>Posted on May 4, 2020</div><div class="tags-container"><div>#Computing</div><div>#Scala</div><div>#Zio</div><div>#Simulation</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>The game of life is a cellular automation devised by John Conway.
 This simulation has only few rules, but it is turing complete [0] and incredibly interesting to watch.
 With recent news about Conway, I thought its time to give it a go.
 In one programming kata I had encountered this problem, but never went to fully complete this simulation.
- This time with my favorite programming language: Scala and current favorite library ZIO [1].</p><div class="image-container"><img src="/images/game_of_life/game_of_life_for_blog.gif" /><div class="image-caption"></div></div><h2>Rules of the game</h2><p>Universe is 2D infinite space. With that we have four simple rules for our automation:</p><ul><li>Any live cell with fewer than two live neighbours dies, as if by underpopulation</li><li>Any live cell with two or three live neighbours lives on to the next generation</li><li>Any live cell with more than three live neighbours dies, as if by overpopulation</li><li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction</li></ul><p>Each cell will have 8 neighbours which need to be checked for these rules to be used
+ This time with my favorite programming language: Scala and current favorite library: ZIO [1].</p><div class="image-container"><img src="/images/game_of_life/game_of_life_for_blog.gif" /><div class="image-caption"></div></div><h2>Rules of the game</h2><p>Universe is 2D infinite space. With that we have four simple rules for our automation:</p><ul><li>Any live cell with fewer than two live neighbours dies, as if by underpopulation</li><li>Any live cell with two or three live neighbours lives on to the next generation</li><li>Any live cell with more than three live neighbours dies, as if by overpopulation</li><li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction</li></ul><p>Each cell will have 8 neighbours which need to be checked for these rules to be used
 This results in next game state and same rules will need to be applied to create third game state. 
 And so on.</p><pre>
 +-----+
 |YYY--|
 |YXY--|
-+YYY--+ , where X is the cell and Y are its neighbours.</pre><h4>Bibliography</h4><ul><li><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">[0] - https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a></li><li><a href="https://zio.dev/">[1] - Type-safe, composable asynchronous and concurrent programming for Scala</a></li></ul><div><h4>Feedback</h4><p>If you have any suggestions or want to contact me - I am eagerly waiting for your feedback: { blog at benetis.me }.</p></div></div></div><nav><ul><li><a href="https://benetis.me/articles/game-of-life.html">Conway's Game of life</a></li><li><a href="https://benetis.me/articles/backtracking-8-queens.html">Backtracking: 8 queens</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2020 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
++YYY--+ , where X is the cell and Y are its neighbours.</pre><h2>Defining the task</h2><p>In order to see how simulation works two things are needed: 1) code to generate next state 2) code to render state.
+The first part is where the rules of simulation are implemented. For this my plan is to implement them
+using TDD methodology where I write least amount of code possible. For the second part the state just needs
+ to be rendered. I think its a good place to use HTML Canvas and just paint rectangles to represent cells.</p><h2>Test driven development</h2><p>Starting with simplest test and then implementing the code.
+ A test for first rule: after one iteration we expect universe to become empty.
+ Also, since universe is infinite - there are infinite amount of dead cells. 
+ This means that live cells should be stored. On top of that - no reason to rush with
+ multi dimensional arrays just because this task deals with 2D plane. 
+ That's the beauty of TDD as in the end you never need them anyway.</p><pre class="code-container"><code class="language-scala line-numbers">
+test(&quot;cell should die if it has no neighbours&quot;) {
+      /*
+      +---------+
+      |---------|
+      |---------|
+      |-X-------|
+      +---------+
+       */
+      val state = Set(Point(1, 1))
+
+      assert(GameOfLifeRules.nextState(state))(equalTo(Set.empty[Point]))
+}           
+        </code></pre><pre class="code-container"><code class="language-scala line-numbers">
+test(&quot;dead cell with 3 live neighbours becomes a live cell&quot;) {
+      /* Input
+      +---------+
+      |---------|
+      |-Y-------|
+      |Y-Y------|
+      +---------+
+       */
+      /* Expected
+      +---------+
+      |---------|
+      |-Y-------|
+      |-X-------|
+      +---------+
+       */
+      val state = Set(Point(0, 1), Point(1, 2), Point(2, 1))
+      val expected = Set(Point(1, 2), Point(1, 1))
+
+      assert(GameOfLifeRules.nextState(state))(equalTo(expected))
+}        
+        </code></pre><p>To keep this as short as possible - other tests can be found <a href="https://github.com/benetis/didactic-computing-machine/blob/master/software-and-math-exercises/game-of-life/src/test/scala/me/benetis/GameOfLifeRulesSpec.scala">in github</a></p><p>In order to test the rules - in total 6 tests were written. It should cover the logic. 
+In the beginning, state was held in an vector, but as more rules got implemented one optimization
+for easier code was to replace vectors with sets as all points are unique anyway.
+Next step is to render calculated 2D universe.</p><h2>Will it render?</h2><p>Few things to be done to render cells. First is to decide on frameworks/tools and platform. 
+'Platform' was mentioned before - HTML Canvas. 
+With HTML Canvas comes Javascript and ScalaJS is a perfect candidate there. I did consider Swing and JavaFX, but
+after playing with it a bit I was not impressed. It seemed hard to do anything 'functionally'. </p><p>Part of program which coordinates rendering:</p><pre class="code-container"><code class="language-scala line-numbers">
+val program: ZIO[Clock, Throwable, Unit] = {
+  for {
+    renderer &lt;- prepareScreen(config)
+    refState &lt;- Ref.make(RandomState.randomCenter(config))
+    _ &lt;- (render(renderer, config, refState) *&gt; updateState(refState) *&gt; UIO(
+      dom.console.log(&quot;tick&quot;)
+    )).repeat(Schedule.fixed(1.second)).forever
+  } yield ()
+}
+        </code></pre><p>Prepare screen is just setting up canvas and returning 2D renderer.
+RefState is where things get interesting. 
+Current cells universe is stored in that reference. 
+And that reference is mutable reference to cell universe value. 
+On top of that it is atomic and thread safe.
+First state of cell universe is just a random state.</p><p>Next line contains the main loop of this application: render cell universe,
+calculate next iteration and update reference with new state.
+ Do this every 1 second and continue forever.</p><p>Now to look at what happens during render and during updateState:</p><pre class="code-container"><code class="language-scala line-numbers">
+private def render(renderer: CanvasRenderingContext2D,
+                   config: RenderConfig,
+                   ref: Ref[LifeState]): ZIO[Any, Nothing, Unit] = {
+  for {
+    _ &lt;- clearCanvas(renderer, config)
+    state &lt;- ref.get
+    _ = state.foreach(p =&gt; renderPoint(renderer, config, p))
+  } yield ()
+}
+
+private def updateState(ref: Ref[LifeState]): ZIO[Any, Nothing, Unit] =
+  for {
+    _ &lt;- ref.update(state =&gt; GameOfLifeRules.nextState(state))
+  } yield ()
+      </code></pre><p>In render function state is retrieved and iterated. 
+State is just a Set of points, so to render it only one iteration is needed.
+Update state does two things: 1) calculate next state 2) update ref with that state.</p><h2>Summary</h2><p>This concludes this quick write up about my experiment with Conway's game of life implementation. 
+Two conclusions I made: Test driven development can really improve code to prevent over engineering solutions and
+simulations are very interesting.</p><p>Missing code code can be found <a href="https://github.com/benetis/didactic-computing-machine/tree/master/software-and-math-exercises/game-of-life">in github [2]</a></p><h4>Bibliography</h4><ul><li><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">[0] - https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a></li><li><a href="https://zio.dev/">[1] - Type-safe, composable asynchronous and concurrent programming for Scala</a></li><li><a href="https://github.com/benetis/didactic-computing-machine/tree/master/software-and-math-exercises/game-of-life">[2] - Github link to the sources</a></li></ul><div><h4>Feedback</h4><p>If you have any suggestions or want to contact me - I am eagerly waiting for your feedback: { blog at benetis.me }.</p></div></div></div><nav><ul><li><a href="https://benetis.me/articles/game-of-life.html">Conway's Game of life</a></li><li><a href="https://benetis.me/articles/backtracking-8-queens.html">Backtracking: 8 queens</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2020 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
