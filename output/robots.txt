@@ -1,2 +1,2 @@
 User-agent: *
-Disallow: /test-page-se
+Disallow: /articles/test-page-se
