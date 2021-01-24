@@ -13,7 +13,8 @@ object MyApp extends App {
   val publishedPosts: Set[Post] = Set(
     posts.NewWorld,
     posts.Backtracking,
-    posts.GameOfLife
+    posts.GameOfLife,
+    posts.TestPageForSE
   )
 
   val myAppLogic: ZIO[Console, Throwable, Unit] =
