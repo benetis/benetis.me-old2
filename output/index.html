@@ -1,42 +1,72 @@
-<!DOCTYPE html><html><head title="What software engineer needs to be able to do in 1-2 hours?"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>What software engineer needs to be able to do in 1-2 hours?</h1><div class="post-meta"><div>Posted on Dec 16, 2021</div><div class="tags-container"><div>#General Software</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>
-    What can software engineer do in 2 hours? Can you make MVP and deploy it to production in that time?
-    What about a senior software engineer?
-    Recently I applied for a developer position. I did it after a personal suggestion from that company's engineer.
-    I received a fairly simple but not easy task to do and I could do it in any programming language I wanted.
-    I will not mention company's name or any of the people involved. But, my experience could make an interesting read.
-    Also the task specifics are changed a little bit for anonymity sake.
-</p><h3> Rules of the &quot;homework assignment&quot; </h3><p>
-    Assignment consists of two tasks. First task is about coding. Second task is about packaging the same application in docker container and deploying it on kubernetes.
-    Time constraint to do these tasks is 1-2 hours and a there is explicit mention not to try to make everything ideal.
-    If you haven't encountered time constraints on interview tasks - usually its to prevent candidates from polishing things too much. It leads to wasting candidate's time on non-important things.
-    Now seeing this tight time constraint I knew immediately that I will have to make huge tradeoffs.
-</p><h3>Specifics</h3><p><div class="br_div">
-</div><div class="br_div">First task is to make a Http server with one endpoint. As I mentioned before, I will change endpoint functionality to a similar one.
-</div><div class="br_div">Endpoint task is to count all multiples of 3 or 5 under given `n`. (Taken from first task of Project Euler [1])
-</div><div class="br_div">Example: localhost:9999/sum_multiples_3_5?n=10
-</div><div class="br_div">Http endpoint should answer 23, because if we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. 3+5+6+9=23
-</div><div class="br_div">
-</div><div class="br_div">Now task mentions that Http server should handle a good RPM and prevent malicious attempts which would bring service down.
-</div><div class="br_div">The higher the N is calculated - the more points you get for the task. Tests are suggested, but left optional.
-</div><div class="br_div">
-</div><div class="br_div">Second task requires the application to be packaged with Dockerfile. Also there needs to be kubernetes YAML file to spin up this image on kube.
-</div><div class="br_div">It also requests an ability to scale up or down, automatic scaling is optional. And it requires to self-heal in case the service goes down.
-</div></p><h3>Considerations</h3><p>There are a lot of design decisions to consider and evaluate possible architecture choices:</p><ul><li>Since this endpoint is computationally expensive, it is almost a rule to cache responses for given n</li><li>Computations can be memoized, for example if we count n=10 and later count n=13, do we count again from n=1 or can we use n=10 cache</li><li>Should cache be shareable between kubernetes instances?</li><li>Can memoized calculations be shared between kubernetes instances?</li><li>How long the timeout should be for the user? Does application continue computations so users in the future can request the number even though it timeouted before?</li><li>What algorithm to pick so resources uses are optimal?</li><li>Should http server threads and computational threads run on separate thread pools?</li><li>Should there be a hardcoded max n? What if better server hardware can handle bigger n easily?</li><li>What kind of data types response needs? Does big fn(very_big_n) response fit in Int, BigInt?</li><li>What if users maliciously request expensive computation in parallel? (DOS attack)</li><li>How can algorithm effectively use memory available on the server?</li><li>How do we benchmark the endpoint if we use cache? Can we use static requests?</li></ul><p>
-    On top of these design decisions there needs to be validation for query params. Best would be if application
-    guides the user to use correct params with correct types. For example: localhost:9999/sum_multiples_3_5?y=cat should provide informative message.
+<!DOCTYPE html><html><head title="Backtracking: 8 queens"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>Backtracking: 8 queens</h1><div class="post-meta"><div>Posted on Apr 5, 2020</div><div class="tags-container"><div>#Computing</div><div>#Scala</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>
+    Recently I started reading a book [1] about evolutionary computing. As you can guess - its about
+    problem solving using evolution concepts. One of the first examples in the book is about 8 queens puzzle.
+    Its a puzzle in constraint satisfaction problem space and my guess is that it is solved with
+    evolutionary computing later on. I think it would be interesting to look into more common
+    algorithm for this puzzle before proceeding with the book. It is called backtracking.
+</p><h2>Puzzle</h2><p>
+    Put 8 queens on a 8x8 chessboard in such a way that no queen can take each other.
+    It might sound an easy puzzle to solve with code. However if you give it a shot -
+    you will quickly see that it is not so trivial.
+</p><div class="image-container"><img src="/images/backtracking/8queens.png" /><div class="image-caption">One of the solutions to this puzzle</div></div><h2>Approaching the problem</h2><h4>Data structures [2]</h4><pre class="code-container"><code class="language-scala line-numbers">
+case class Square(x: Int, y: Int)
 
-    Also since I chose to write in Scala, it makes most sense for hiring managers to expect me to write functional Scala.
+type PlacedQueens = Vector[Square]
 
-    Of course, all this thinking falls under given time constraint of 1-2 hours.
-</p><h3>Action list</h3><p>While there are many things to consider, it makes most sense to rank and execute the
-    required non-optional parts of the tasks. Fulfilling requirements under time constraint is what defines success here.
+val wholeBoard: Vector[Square] = {
+  Range
+    .inclusive(1, 8)
+    .flatMap(x =&gt; {
+      Range
+        .inclusive(1, 8)
+        .map(y =&gt; {
+          Square(x, y)
+        })
+    })
+    .toVector
+}
+  </code></pre><p>Instead of usual chess squares with letters and digits, pair of digits (x, y) is used.
+    This is to avoid mapping letters to digits for diagonal checks later on. This optimisation's problem's goal
+    is to find a vector of square where queens can be put. Board of is chess is just a matrix with pairs of row and column numbers as their values.
+</p><p>| (1,1) (1,2) ... |</p><p>| (2,1) (2,2) ... |</p><h4>Algorithm</h4><p>
+    The first 'solution' that comes to mind is a recursive one.
+    Try to put one queen and the next after that.
+    No need to carry so called state of what squares were checked already and which ones were not.
+    This results with a problem that if no solution is found with 8 queens and first queen on square (1,1). </p><p>Since this is not enough, next step is to keep some sort of state. The easiest solution should be to just iterate
+    through all squares and start backtracking from each of the squares. This actually works, although the code below
+    is not performant due non-early return of foldLeft (takes a minute~ to find a solution). Next step would be to replace it with something that can do early returns,
+    but this is beyond my interest.
+</p><pre class="code-container"><code class="language-scala line-numbers">
+def placeQueens(toPlace: Int,
+                available: Vector[Square]): Option[PlacedQueens] = {
 
-    Sensible mini-tasks list I chose to do in order:
-</p><ul><li>Start writing README file to capture some of considerations and decisions that went into solution</li><li>Code function to calculate sum_multiples_of_3_5</li><li>Rewrite the function to be tail recursive</li><li>Scaffold http server with the endpoint</li><li>Validation for the endpoint</li><li>Connect function and http server to make a naive solution</li><li>Cache with a Ref[Map[Int, BigInt]], where cache is a Map and Ref is there to deal with concurrency</li><li>Apache benchmark with static N to test the throughput</li><li>Wrap sum_of_multiples function in effect, add a timeout of constant 30 seconds. This means if it exceeds that time, user will receive error &quot;Timeout of 30 secs exceeded&quot; with Http code 400</li><li>Benchmark with higher number to test the timeout</li><li>Capture benchmark results into README file, write how big of N I tested application with</li><li>I chose not to write tests as they are optional and there is not enough time for them now. I deemed benchmarks more important as task specifically mentions higher points for better performance</li></ul><p>
-    Http server works, in the end I managed to make it around 100 LoC. Its possible to run it and curl to get the result as per task requirements.
-    Second part is about packaging in docker and spinning it up on k8s.
-    Sensible mini-tasks lists I chose to do:
-</p><ul><li>Since task mentions self contained image with Dockerfile, I could not use &quot;industry standard&quot; sbt-native-package, I bootstrapped dockerfile with scala-sbt base image</li><ul><li>Set SBT_OPTS for memory with ENV in the file</li><li>Copy whole project into docker image</li><li>Run sbt assembly</li><li>Change base image to JDK</li><li>Expose http server port</li><li>Run the jar file containing http-server</li></ul><li>Test image locally with docker run -p $PORT and see if it works</li><li>Kubernetes part of deployment and service</li><ul><li>Deployment of the image with livelinessProbe on httpGet /sum_multiples_3_5?n=10 to meet self-heal requirement</li><li>Service to forward port 80 to container's exposed port</li></ul><li>Test kubernetes deployment on minikube, benchmark, make pod go down and see if it heals</li><li>Benchmark kubernetes deployment and compare to local sbt deployment, see if results differ</li></ul><p>I did not do automatic pod scaling as I never used it before. There was no time to research and test, but since it was optional - I ignored it</p><h3>Feedback from company and conclusion</h3><p>I get an email from company saying: I did not write tests, did not implement autoscaling (hpa) and timeout requests should not return bad request status code. Thus, I am rejected and I can apply again in X months.</p><p>No mention of how well my application performed in comparison or if the design choices made were correct</p><p>WTF? My choice with status code makes sense to me as timeout should not be 200. As for the optional things, I chose specifically to prioritize non-optional stuff first due this insane time constraint. Who in the world could do all this in 1-2 hours?</p><p>Tests you can always find the ones I have on github or just ask me separately to provide some code examples with tests. Or even give me more time on this task (beyond 2hrs) to write them. I specifically mentioned in the notes that I chose benchmarking priority over testing due not enough time having for both.</p><p>In retrospect I am surprised by their response and expectations, its sad I wasted my time, but I did have fun writing this post.</p><p>Thanks for reading and have a nice day!</p></div></div><nav><ul><li><a href="https://benetis.me/articles/2-hours-of-engineering.html">Interviews: How much can you do in two hours as software engineer?</a></li><li><a href="https://benetis.me/articles/game-of-life.html">Conway's Game of life</a></li><li><a href="https://benetis.me/articles/backtracking-8-queens.html">Backtracking: 8 queens</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2021 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  if (toPlace &lt;= 0) {
+    Some(Vector.empty[Square])
+  } else {
+    val result = available.foldLeft(Vector.empty[Square])(
+      (prev, queenToPlace: Square) =&gt; {
+        val afterQueen = canBePlaced(queenToPlace, available)
+
+        afterQueen match {
+          case Some(nextSquares) =&gt;
+            placeQueens(toPlace - 1, nextSquares) match {
+              case Some(value) =&gt;
+                queenToPlace +: value
+              case None =&gt; prev
+            }
+          case None =&gt; prev
+        }
+
+      }
+    )
+
+    if (result.isEmpty)
+      None
+    else
+      Some(result)
+  }
+}
+          </code></pre><h4>Bibliography</h4><ul><li>[1] - Introduction to Evolutionary Computing By A.E. Eiben, J.E. Smith </li><li><a href="https://github.com/benetis/didactic-computing-machine/blob/master/software-and-math-exercises/constraint-satisfaction/src/main/scala/me/benetis/Main.scala">[2] - Demo'ed code of this problem (github)</a></li></ul><div><h4>Feedback</h4><p>If you have any suggestions or want to contact me - I am eagerly waiting for your feedback: { blog at benetis.me }.</p></div></div></div><nav><ul><li><a href="https://benetis.me/articles/2-hours-of-engineering.html">Interviews: How much can you do in two hours as software engineer?</a></li><li><a href="https://benetis.me/articles/game-of-life.html">Conway's Game of life</a></li><li><a href="https://benetis.me/articles/backtracking-8-queens.html">Backtracking: 8 queens</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2021 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
