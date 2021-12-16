@@ -22,6 +22,10 @@ case object Meta extends CategoryTag {
   override def value: String = "Meta"
 }
 
+case object GeneralSoftware extends CategoryTag {
+  override def value: String = "General Software"
+}
+
 case object Computing extends CategoryTag {
   override def value: String = "Computing"
 }

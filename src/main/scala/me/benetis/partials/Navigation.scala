@@ -8,6 +8,9 @@ object Navigation extends Partial {
   def render(): Content = {
     tag("nav")(
       ul(
+        li(a(
+          href := "https://benetis.me/articles/2-hours-of-engineering.html",
+          "Interviews: How much can you do in two hours as software engineer?")),
         li(
           a(href := "https://benetis.me/articles/game-of-life.html",
             "Conway's Game of life")),

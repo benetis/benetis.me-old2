@@ -14,7 +14,7 @@ object MyApp extends App {
     posts.NewWorld,
     posts.Backtracking,
     posts.GameOfLife,
-    posts.TestPageForSE
+    posts.SoftwareEngineerTwoHours
   )
 
   val myAppLogic: ZIO[Console, Throwable, Unit] =

@@ -1,99 +1,44 @@
-<!DOCTYPE html><html><head title="Conway's Game of life"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>Conway's Game of life</h1><div class="post-meta"><div>Posted on May 4, 2020</div><div class="tags-container"><div>#Computing</div><div>#Scala</div><div>#Zio</div><div>#Simulation</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>The game of life is a cellular automation devised by John Conway.
-  This simulation has only few rules, but it is turing complete [0] and incredibly interesting to watch.
-  With recent news about Conway, I thought its time to give it a go.
-  In one programming kata I had encountered this problem, but never went to fully complete this simulation.
-  This time with my favorite programming language: Scala and current favorite library: ZIO [1].</p><div class="image-container"><img src="/images/game_of_life/game_of_life_for_blog.gif" /><div class="image-caption"></div></div><h2>Rules of the game</h2><p>Universe is 2D infinite space. With that we have four simple rules for our automation:</p><ul><li>Any live cell with fewer than two live neighbours dies, as if by underpopulation</li><li>Any live cell with two or three live neighbours lives on to the next generation</li><li>Any live cell with more than three live neighbours dies, as if by overpopulation</li><li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction</li></ul><p>Each cell will have 8 neighbours which need to be checked for these rules to be used
-  This results in next game state and same rules will need to be applied to create third game state.
-  And so on.</p><pre>
-+-----+
-|YYY--|
-|YXY--|
-+YYY--+ , where X is the cell and Y are its neighbours.</pre><h2>Defining the task</h2><p>In order to see how simulation works two things are needed: 1) code to generate next state 2) code to render state.
-  The first part is where the rules of simulation are implemented. For this my plan is to implement them
-  using TDD methodology where I write least amount of code possible. For the second part the state just needs
-  to be rendered. I think its a good place to use HTML Canvas and just paint rectangles to represent cells.</p><p>Some considerations: since universe is infinite - there are infinite amount of dead cells.
-  This means that live cells should be stored. On top of that - no reason to rush with
-  multi dimensional arrays just because this task deals with 2D plane.
-  That's the beauty of TDD as in the end you never need them anyway.</p><h2>Test driven development</h2><p>Starting with simplest test and then implementing the code.
-  A test for first rule: after one iteration we expect universe to become empty.</p><pre class="code-container"><code class="language-scala line-numbers">
-test(&quot;cell should die if it has no neighbours&quot;) {
-      /*
-      +---------+
-      |---------|
-      |---------|
-      |-X-------|
-      +---------+
-       */
-      val state = Set(Point(1, 1))
+<!DOCTYPE html><html><head title="What software engineer needs to be able to do in 1-2 hours?"><script></script><link href="/styles/main.css" type="text/css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet" /></head><body><div class="page-container"><h1>What software engineer needs to be able to do in 1-2 hours?</h1><div class="post-meta"><div>Posted on Dec 16, 2021</div><div class="tags-container"><div>#General Software</div></div></div><div class="post-container"><div><h2>Introduction</h2><p>
+    What can software engineer do in 2 hours? Can you make MVP and deploy it to production in that time?
+    What about a senior software engineer?
+    Recently I applied for a developer position. I did it after a personal suggestion from that company's engineer.
+    I received a fairly simple but not easy tasks to do and I could do it in any programming language I wanted.
+    I will not mention company's name or any of the people involved. But, my experience could make an interesting read.
+    Also the task specifics are changed a little bit for anonymity sake.
+</p><h3> Rules of the &quot;homework assignment&quot; </h3><p>
+    Assignment consists of two tasks. First task is about coding. Second task is about packaging the same application in docker container and deploying it on kubernetes.
+    Time constraint to do these tasks is 1-2 hours and a there is explicit mention not to try to make everything ideal.
+    If you haven't encountered time constraints on interview tasks - usually its to prevent candidates from polishing things too much. It leads to wasting candidate's time on non-important things.
+    Now seeing this tight time constraint I knew immediately that I will have to make huge tradeoffs.
+</p><h3>Specifics</h3><p><div class="br_div">
+</div><div class="br_div">First task is to make a Http server with one endpoint. As I mentioned before, I will change endpoint functionality to a similar one.
+</div><div class="br_div">Endpoint task is to count all multiples of 3 or 5 under given `n`. (Taken from first task of Project Euler [1])
+</div><div class="br_div">Example: localhost:9999/sum_multiples_3_5?n=10
+</div><div class="br_div">Http endpoint should answer 23, because if we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. 3+5+6+9=23
+</div><div class="br_div">
+</div><div class="br_div">Now task mentions that Http server should handle a good RPM and prevent malicious attempts which would bring service down.
+</div><div class="br_div">The higher the N is calculated - the more points you get for the task. Tests are suggested, but left optional.
+</div><div class="br_div">
+</div><div class="br_div">Second task requires the application to be packaged with Dockerfile. Also there needs to be kubernetes YAML file to spin up this image on kube.
+</div><div class="br_div">It also requests an ability to scale up or down, automatic scaling is optional. And it requires to self-heal in case the service goes down.
+</div></p><h3>Considerations</h3><p>There are a lot of design decisions to consider and evaluate possible architecture choices:</p><ul><li>Since this endpoint is computationally expensive, it is almost a rule to cache responses for given n</li><li>Computations can be memoized, for example if we count n=10 and later count n=13, do we count again from n=1 or can we use n=10 cache</li><li>Should cache be shareable between kubernetes instances?</li><li>Can memoized calculations be shared between kubernetes instances?</li><li>How long the timeout should be for the user? Does application continue computations so users in the future can request the number even though it timeouted before?</li><li>What algorithm to pick so resources uses are optimal?</li><li>Should http server threads and computational threads run on separate thread pools?</li><li>Should there be a hardcoded max n?</li><li>What if users maliciously request expensive computation in parallel? (DOS attack)</li><li>How can algorithm effectively use memory available on the server?</li><li>How do we benchmark the endpoint if we use cache? Can we use static requests?</li></ul><p>
+    On top of these design decisions there needs to be validation for query params. Best would be if application
+    guides the user to use correct params with correct types. For example: localhost:9999/sum_multiples_3_5?y=cat should provide informative message.
 
-      assert(GameOfLifeRules.nextState(state))(equalTo(Set.empty[Point]))
-}
-        </code></pre><pre class="code-container"><code class="language-scala line-numbers">
-test(&quot;dead cell with 3 live neighbours becomes a live cell&quot;) {
-      /* Input
-      +---------+
-      |---------|
-      |-Y-------|
-      |Y-Y------|
-      +---------+
-       */
-      /* Expected
-      +---------+
-      |---------|
-      |-Y-------|
-      |-X-------|
-      +---------+
-       */
-      val state = Set(Point(0, 1), Point(1, 2), Point(2, 1))
-      val expected = Set(Point(1, 2), Point(1, 1))
+    Also since I chose to write in Scala, it makes most sense for hiring managers to expect me to write functional Scala.
 
-      assert(GameOfLifeRules.nextState(state))(equalTo(expected))
-}
-        </code></pre><p>To keep this as short as possible - other tests can be found <a href="https://github.com/benetis/didactic-computing-machine/blob/master/software-and-math-exercises/game-of-life/src/test/scala/me/benetis/GameOfLifeRulesSpec.scala">in github</a></p><p>In order to test the rules - in total 6 tests were written. It should cover the logic.
-  In the beginning, state was held in an vector, but as more rules got implemented one optimization
-  for easier code was to replace vectors with sets as all points are unique anyway.
-  Next step is to render calculated 2D universe.</p><h2>Will it render?</h2><p>Few things to be done to render cells. First is to decide on frameworks/tools and platform.
-  'Platform' was mentioned in previous section - HTML Canvas.
-  With HTML Canvas comes Javascript and ScalaJS is a perfect candidate there. I did consider Swing and JavaFX, but
-  after playing with it a bit I was not impressed. It seemed hard to do anything 'functionally'. </p><p>Part of program which coordinates rendering:</p><pre class="code-container"><code class="language-scala line-numbers">
-val program: ZIO[Clock, Throwable, Unit] = {
-  for {
-    renderer &lt;- prepareScreen(config)
-    refState &lt;- Ref.make(RandomState.randomCenter(config))
-    _ &lt;- (render(renderer, config, refState) *&gt; updateState(refState) *&gt; UIO(
-      dom.console.log(&quot;tick&quot;)
-    )).repeat(Schedule.fixed(1.second)).forever
-  } yield ()
-}
-        </code></pre><p>PrepareScreen is just setting up canvas and returning 2D renderer.
-  RefState is where things get interesting.
-  Current cells universe is stored in that reference.
-  And that reference is mutable reference to cell universe value.
-  On top of that it is atomic and thread safe.
-  First state of cell universe is just a random state.</p><p>Next line contains the main loop of this application: render cell universe,
-  calculate next iteration and update reference with new state.
-  Do this every 1 second and continue forever.</p><p>Now to look at what happens during render and during updateState:</p><pre class="code-container"><code class="language-scala line-numbers">
-private def render(renderer: CanvasRenderingContext2D,
-                   config: RenderConfig,
-                   ref: Ref[LifeState]): ZIO[Any, Nothing, Unit] = {
-  for {
-    _ &lt;- clearCanvas(renderer, config)
-    state &lt;- ref.get
-    _ = state.foreach(p =&gt; renderPoint(renderer, config, p))
-  } yield ()
-}
+    Of course, all this thinking falls under given time constraint of 1-2 hours.
+</p><h3>Action list</h3><p>While there are many things to consider, it makes most sense to rank and execute the
+    required non-optional parts of the tasks. Fulfilling requirements under time constraint is what defines success here.
 
-private def updateState(ref: Ref[LifeState]): ZIO[Any, Nothing, Unit] =
-  for {
-    _ &lt;- ref.update(state =&gt; GameOfLifeRules.nextState(state))
-  } yield ()
-      </code></pre><p>In render function state is retrieved and iterated.
-  State is just a Set of points, so to render it only one iteration is needed.
-  Update state does two things: 1) calculate next state 2) update ref with that state.</p><p>Everything is compiled to Javascript and rendered in a browser through index.html and game-of-life-fastopt.js</p><h2>Summary</h2><p>This concludes this quick write up about my experiment with Conway's game of life implementation.
-  Two conclusions I made: Test driven development can really improve code to prevent over engineering solutions and
-  simulations are very interesting.</p><p>Missing code code can be found <a href="https://github.com/benetis/didactic-computing-machine/tree/master/software-and-math-exercises/game-of-life">in github [2]</a></p><h4>Bibliography</h4><ul><li><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">[0] - https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life</a></li><li><a href="https://zio.dev/">[1] - Type-safe, composable asynchronous and concurrent programming for Scala</a></li><li><a href="https://github.com/benetis/didactic-computing-machine/tree/master/software-and-math-exercises/game-of-life">[2] - Github link to the sources</a></li></ul><div><h4>Feedback</h4><p>If you have any suggestions or want to contact me - I am eagerly waiting for your feedback: { blog at benetis.me }.</p></div></div></div><nav><ul><li><a href="https://benetis.me/articles/game-of-life.html">Conway's Game of life</a></li><li><a href="https://benetis.me/articles/backtracking-8-queens.html">Backtracking: 8 queens</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2020 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    Sensible mini-tasks list I chose to do in order:
+</p><ul><li>Start writing README file to capture some of considerations and decisions that went into solution</li><li>Code function to calculate sum_multiples_of_3_5</li><li>Rewrite the function to be tail recursive</li><li>Scaffold http server with the endpoint</li><li>Validation for the endpoint</li><li>Connect function and http server to make a naive solution</li><li>Cache with a Ref[Map[Int, BigInt]], where cache is a Map and Ref is there to deal with concurrency</li><li>Apache benchmark with static N to test the throughput</li><li>Wrap sum_of_multiples function in effect, add a timeout of constant 30 seconds. This means if it exceeds that time, user will receive error &quot;Timeout of 30 secs exceeded&quot; with Http code 400</li><li>Benchmark with higher number to test the timeout</li><li>Capture benchmark results into README file, write how big of N I tested application with</li><li>I chose not to write tests as they are optional and there is not enough time for them now. I deemed benchmarks more important as task specifically mentions higher points for better performance</li></ul><p>
+    Http server works, in the end I managed to make it around 100 LoC. Its possible to run it and curl to get the result as per task requirements.
+    Second part is about packaging in docker and spinning it up on k8s.
+    Sensible mini-tasks lists I chose to do:
+</p><ul><li>Since task mentions self contained image with Dockerfile, I could not use &quot;industry standard&quot; sbt-native-package, I bootstrapped dockerfile with scala-sbt base image</li><ul><li>Set SBT_OPTS for memory with ENV in the file</li><li>Copy whole project into docker image</li><li>Run sbt assembly</li><li>Change base image to JDK</li><li>Expose http server port</li><li>Run the jar file containing http-server</li></ul><li>Test image locally with docker run -p $PORT and see if it works</li><li>Kubernetes part of deployment and service</li><ul><li>Deployment of the image with livelinessProbe on httpGet /sum_multiples_3_5?n=10 to meet self-heal requirement</li><li>Service to forward port 80 to container's exposed port</li></ul><li>Test kubernetes deployment on minikube, benchmark, make pod go down and see if it heals</li><li>Benchmark kubernetes deployment and compare to local sbt deployment, see if results differ</li></ul><p>I did not do automatic pod scaling as I never used it before. There was no time to research and test, but since it was optional - I ignored it</p><h3>Feedback from company and conclusion</h3><p>I get an email from company saying: I did not write tests, did not implement autoscaling (hpa) and timeout requests should not return bad request status code. Thus, I am rejected and I can apply again in X months.</p><p>No mention of how well my application performed in comparison or if the design choices made were correct</p><p>WTF? My choice with status code makes sense to me (timeout - return 400 to force user to change their request). As for the optional things, I chose specifically to prioritize non-optional stuff first due this insane time constraint. Who in the world could do all this in 1-2 hours?</p><p>Tests you can always find the ones I have on github or just ask me separately to provide some code examples with tests. Or even give me more time on this task (beyond 2hrs) to write them. I specifically mentioned in the notes that I chose benchmarking priority over testing due not enough time having for both.</p><p>In retrospect I am surprised by their response and expectations, its sad I wasted my time, but I did have fun writing this post.</p><p>Thanks for reading and have a nice day!</p></div></div><nav><ul><li><a href="https://benetis.me/articles/2-hours-of-engineering.html">Interviews: How much can you do in two hours as software engineer?</a></li><li><a href="https://benetis.me/articles/game-of-life.html">Conway's Game of life</a></li><li><a href="https://benetis.me/articles/backtracking-8-queens.html">Backtracking: 8 queens</a></li><li><a href="https://benetis.me/articles/new-world-blog.html">From the New world</a></li></ul><div><a href="https://benetis.me/old">Archived blog</a></div></nav></div><div><footer>Žygimantas Benetis • 2021 • <a href="https://benetis.me">Typical personal blog</a><script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 ga('create', 'UA-36419336-4', 'auto');
 ga('send', 'pageview');</script></footer></div><link href="/libs/prism.css" type="text/css" rel="stylesheet" /><script src="/libs/prism.js"></script></body></html>
