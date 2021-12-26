@@ -145,7 +145,7 @@ object SoftwareEngineerTwoHours extends Post {
       h3("Feedback from company and conclusion"),
       p("I get an email from company saying: I did not write tests, did not implement autoscaling (hpa) and timeout requests should not return bad request status code. Thus, I am rejected and I can apply again in X months."),
       p("No mention of how well my application performed in comparison or if the design choices made were correct"),
-      p("WTF? My choice with status code makes sense to me as timeout should not be 200. As for the optional things, I chose specifically to prioritize non-optional stuff first due this insane time constraint. Who in the world could do all this in 1-2 hours?"),
+      p("What the hell? My choice with status code makes sense to me as timeout should not be 200. As for the optional things, I chose specifically to prioritize non-optional stuff first due this insane time constraint. Who in the world could do all this in 1-2 hours?"),
       p("Tests you can always find the ones I have on github or just ask me separately to provide some code examples with tests. Or even give me more time on this task (beyond 2hrs) to write them. I specifically mentioned in the notes that I chose benchmarking priority over testing due not enough time having for both."),
       p("In retrospect I am surprised by their response and expectations, its sad I wasted my time, but I did have fun writing this post."),
       p("Thanks for reading and have a nice day!")
