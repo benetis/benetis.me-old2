@@ -41,7 +41,7 @@ lazy val root = (project in file("."))
     name := "benetis.me",
     libraryDependencies += scalaTest                % Test,
     libraryDependencies += "com.lihaoyi"            %% "scalatags" % "0.8.2",
-    libraryDependencies += "dev.zio"                %% "zio" % "1.0.0-RC18",
+    libraryDependencies += "dev.zio"                %% "zio" % "1.0.12",
     libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "2.22.0",
     libraryDependencies += "com.lihaoyi"            %% "fastparse" % "2.2.2",
   )

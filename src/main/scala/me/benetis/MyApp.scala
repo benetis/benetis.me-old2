@@ -3,12 +3,12 @@ package me.benetis
 import me.benetis.compiler.Compiler
 import me.benetis.model.Post
 import zio.console.{Console, putStrLn}
-import zio.{App, ZIO}
+import zio.{App, ExitCode, URIO, ZIO}
 
 object MyApp extends App {
 
-  def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
-    myAppLogic.fold(_ => 1, _ => 0)
+  override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
+    myAppLogic.exitCode
 
   val publishedPosts: Set[Post] = Set(
     posts.NewWorld,
