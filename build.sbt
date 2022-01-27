@@ -39,11 +39,13 @@ lazy val root = (project in file("."))
       "-language:postfixOps"
     ),
     name := "benetis.me",
-    libraryDependencies += scalaTest                % Test,
-    libraryDependencies += "com.lihaoyi"            %% "scalatags" % "0.8.2",
-    libraryDependencies += "dev.zio"                %% "zio" % "1.0.12",
-    libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "2.22.0",
-    libraryDependencies += "com.lihaoyi"            %% "fastparse" % "2.2.2",
+    libraryDependencies ++= Seq(
+      scalaTest                % Test,
+      "com.lihaoyi"            %% "scalatags" % "0.8.2",
+      "dev.zio"                %% "zio" % "1.0.12",
+      "com.github.nscala-time" %% "nscala-time" % "2.22.0",
+      "com.lihaoyi"            %% "fastparse" % "2.2.2",
+    ),
   )
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
