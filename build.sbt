@@ -46,6 +46,7 @@ lazy val root = (project in file("."))
       "com.github.nscala-time" %% "nscala-time" % "2.22.0",
       "com.lihaoyi"            %% "fastparse" % "2.2.2",
     ),
+    watchTriggers += baseDirectory.value.toGlob/ "src" / "*.css",
   )
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
