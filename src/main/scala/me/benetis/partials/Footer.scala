@@ -8,7 +8,7 @@ import scalatags.Text.all._
 object Footer extends Partial {
   def render(posts: Set[Post]): Content = div(
     footer(
-      s"Žygimantas Benetis • ${DateTime.now().year().get()} • ",
+      s"Žygimantas Benetis • 2016 - ${DateTime.now().year().get()} • ",
       a(href := "https://benetis.me", "Typical personal blog"),
     )
   )
