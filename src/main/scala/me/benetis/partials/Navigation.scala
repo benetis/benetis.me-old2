@@ -20,8 +20,7 @@ object Navigation extends Partial {
         li(
           a(href := "https://benetis.me/articles/new-world-blog.html",
             "From the New world")),
-      ),
-      div(a(href := "https://benetis.me/old", "Archived blog")),
+      )
     )
   }
 }
