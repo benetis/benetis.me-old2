@@ -45,6 +45,9 @@ lazy val root = (project in file("."))
       "dev.zio"                %% "zio" % "1.0.12",
       "com.github.nscala-time" %% "nscala-time" % "2.22.0",
       "com.lihaoyi"            %% "fastparse" % "2.2.2",
+      "eu.timepit" %% "refined"                 % "0.9.28",
+      "eu.timepit" %% "refined-cats"            % "0.9.28",
+      "io.estatico" %% "newtype" % "0.4.4"
     ),
     watchTriggers += baseDirectory.value.toGlob/ "src" / "*.css",
   )
